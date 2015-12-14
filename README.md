@@ -1,2 +1,3 @@
 # juicy-table-repeat
-A workaround custom element which allows you to use dom-repeat inside table under IE and FF
+This is a workaround custom element to support `<template is="dom-repeat">` in `<table>` under IE.
+Will not be required after this Polymer issue is fixed: https://github.com/Polymer/polymer/issues/1567
