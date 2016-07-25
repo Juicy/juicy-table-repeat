@@ -16,6 +16,11 @@
 <body>
     <h3>juicy-table-repeat</h3>
     <template is="dom-bind" id="root">
+        <p>
+            <button type="button" on-click="update" class="btn btn-default">Update first row</button>
+            <button type="button" on-click="insert" class="btn btn-default">Insert a row</button>
+            <button type="button" on-click="remove" class="btn btn-default">Remove first row</button>
+        </p>
         <juicy-table-repeat rows="{{model.products}}">
             <table class="table">
                 <thead>
@@ -102,6 +107,21 @@
                     name: "i7-5820k",
                     price: 310
                 }]
+            };
+
+            template.update = function () {
+                template.set("model.products.0.price", model.products[0].price - 1);
+            };
+
+            template.insert = function () {
+                template.push("model.products", {
+                    name: "i7-6800k",
+                    price: 350
+                });
+            };
+
+            template.remove = function () {
+                template.splice("model.products", 0, 1);
             };
             
             template.model = model;

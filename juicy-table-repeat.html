@@ -27,7 +27,7 @@
                 this.generateRows();
                 this.isAttached = true;
             },
-            observers: ["rowsChanged(rows.length)"],
+            observers: ["rowsChanged(rows.*)"],
             generateRows: function () {
                 this.tbody.innerHTML = "";
 
@@ -36,21 +36,40 @@
                 }
 
                 for (var i = 0; i < this.rows.length; i++) {
-                    this.rowTemplate._parent_item = this.rows[i];
-
-                    var row = this.rowTemplate.stamp();
-                    var tr = row.root.querySelector("tr");
-
+                    var tr = this._stampTableRow(this.rows[i]);
                     this.tbody.appendChild(tr);
-                    this.rowTemplate._parent_item = undefined;
                 }
             },
-            rowsChanged: function () {
+            rowsChanged: function (e) {
                 if (!this.isAttached) {
                     return;
                 }
 
-                this.generateRows();
+                var path = e.path.split(/[.#]+/gi);
+                var index = path[1];
+                
+                if (index == "splices" || index == "length") {
+                    this.generateRows();
+                    return;
+                }
+
+                var row = this.get("rows.#" + index);
+                var i = this.rows.indexOf(row);
+                var newTr = this._stampTableRow(this.rows[i]);
+                var oldTr = this.tbody.querySelectorAll("tr")[i];
+
+                this.tbody.insertBefore(newTr, oldTr);
+                this.tbody.removeChild(oldTr);
+            },
+            _stampTableRow: function (data) {
+                this.rowTemplate._parent_item = data;
+
+                var row = this.rowTemplate.stamp();
+                var tr = row.root.querySelector("tr");
+
+                this.rowTemplate._parent_item = undefined;
+
+                return tr;
             }
         });
     </script>
