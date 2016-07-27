@@ -33,7 +33,7 @@ Use this:
       </tbody>
     </table>
     <template is="dom-template" class="row-template">
-        <table class="products-shops-box">
+        <table>
             <tr>
               <td>{{item.Name}}</td>
               <!-- other item stuff -->
