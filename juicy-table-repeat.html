@@ -28,7 +28,7 @@
                 this.rowTemplate = this.querySelector("template.row-template");
                 var that = this;
                 // Forward item's notification up to the root
-                this.rowTemplate._forwardInstancePath = function(inst, path, value) {
+                this.rowTemplate._forwardInstancePath = function (inst, path, value) {
                     var index = that.stampedRowTemplates.indexOf(inst);
                     that.notifyPath('rows.' + index + path.substr(4), value);
                 };
@@ -43,14 +43,14 @@
             itemChanged: function (change) {
                 // TODO: watchout for keys
                 var path = change.path.match(/rows\.#(\d+)\.(.+)/);
-                if(!path){
-                    return ;
+                if (!path) {
+                    return;
                 }
                 // Make sure that elements were stamped
                 // workaround for Juicy/juicy-table-repeat/issues/4
                 this.stampedRowTemplates[path[1]] &&
                 // notify template
-                  this.stampedRowTemplates[path[1]].notifyPath('item.'+path[2], change.value);
+                  this.stampedRowTemplates[path[1]].notifyPath('item.' + path[2], change.value);
             },
             generateRows: function () {
                 this.tbody.innerHTML = "";
@@ -60,7 +60,7 @@
                 }
 
                 for (var i = 0; i < this.rows.length; i++) {
-                    var row = this.rowTemplate.stamp({item: this.rows[i]});
+                    var row = this.rowTemplate.stamp({ item: this.rows[i] });
                     var tr = row.root.querySelector("tr");
                     this.tbody.appendChild(tr);
                     this.stampedRowTemplates.push(row);
