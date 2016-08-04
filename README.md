@@ -75,6 +75,14 @@ Use this:
 - A splice on the `rows` array causes entire table re-rendering.
 - A row property change causes entire table row re-rendering.
 
+## Options
+
+Attribute     | Options     | Default      | Description
+---           | ---         | ---          | ---
+`rows`        | *Array*     |              | The array of objects to iterate over.
+
+## [Contributing and Development](CONTRIBUTING.md)
+
 ## History
 
 For detailed changelog, check [Releases](https://github.com/Juicy/juicy-table-repeat/releases).
