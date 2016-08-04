@@ -1,0 +1,116 @@
+
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../polymer/polymer.html">
+    <!-- Step 1: import the element to test -->
+    <link rel="import" href="../juicy-table-repeat.html">
+    <!-- <script src="helpers/WCT-Polyfill_bugs_workaround.js"></script> -->
+</head>
+
+<body>
+    <test-fixture id="root">
+        <template>
+            <div><template is="dom-bind">
+                <template is="dom-if" if="{{model.products}}">
+                    <juicy-table-repeat rows="{{model.products}}">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td>item.name</td>
+                                    <td>item.stock</td>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <template is="dom-template" class="row-template">
+                            <table>
+                                <tr>
+                                    <td>{{item.name}}</td>
+                                    <td><input value="{{item.stock::change}}" /><span>{{item.stock}}</span></td>
+                                </tr>
+                            </table>
+                        </template>
+                    </juicy-table-repeat>
+
+                    <!-- Reference dom-repeat -->
+                    <div id="reference" class="table">
+                        <template is="dom-repeat" items="{{model.products}}">
+                            <div class="tr">
+                                <div class="td">{{item.name}}</div>
+                                <div class="td"><input value="{{item.stock::change}}" /><span>{{item.stock}}</span></div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </template></div>
+        </template>
+    </test-fixture>
+    <script>
+        function createModel() {
+            return {
+                products: [
+                    {name: 'bearing', stock: 10},
+                    {name: 'deck', stock: 12}
+                ]
+            };
+        };
+
+        describe('after `dom-bind`` was attached to DOM', function() {
+            afterEach(function (done) {
+                // give more time to polyfill cleanup
+                setTimeout(done);
+            });
+            var container, domBind, element, partial;
+            beforeEach(function(done) {
+                container = fixture('root');
+                domBind = container.querySelector('template[is=dom-bind]');
+                domBind.model = createModel();
+                setTimeout(function() {
+                    element = container.querySelector('juicy-table-repeat');
+                    done();
+                })
+            });
+
+            xit('should stamp template according to the given model', function() {
+            });
+            describe('after array element\'s value value is changed from outside (root/parent node)', function() {
+                beforeEach(function(done) {
+                    domBind.set('model.products.1.name', 'griptape');
+                    setTimeout(function() {
+                        element = container.querySelector('juicy-table-repeat');
+                        done();
+                    })
+                });
+                it('should update bound element', function() {
+                    expect(element.querySelector('table tbody > tr:nth-child(2) > td').innerHTML).to.equal('griptape');
+                });
+            });
+            describe('after array element\'s value value is changed from inside (by node stamped from row template)', function() {
+                beforeEach(function(done) {
+                    var input = element.querySelector('table tbody > tr:nth-child(2) input');
+                    input.value = 'a lot';
+                    input.dispatchEvent(new Event("change"));
+                    // wait for change event propagation, and reference dom-repeat update
+                    setTimeout(function() {
+                        element = container.querySelector('juicy-table-repeat');
+                        done();
+                    });
+                });
+                it('should update bound element', function() {
+                    expect(container.querySelector('#reference > .tr:nth-child(2) span').innerHTML).to.equal('a lot');
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

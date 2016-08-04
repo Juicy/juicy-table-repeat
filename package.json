@@ -15,5 +15,9 @@
     "bugs": {
         "url": "https://github.com/Juicy/juicy-table-repeat/issues"
     },
+    "scripts": {
+       "test": "wct",
+       "test-sauce": "wct --skip-plugin local --plugin sauce -s \"Windows 10/MicrosoftEdge\""
+     },
     "license": "MIT"
 }

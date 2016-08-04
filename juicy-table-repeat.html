@@ -3,6 +3,8 @@
     Will not be required after this Polymer issue is fixed: https://github.com/Polymer/polymer/issues/1567
     version: 0.0.1
 -->
+<link rel="import" href="../polymer/polymer.html">
+
 <dom-module id="juicy-table-repeat">
     <template>
         <style>
@@ -19,57 +21,53 @@
                 rows: { type: Array, value: [] },
                 item: { type: Object }
             },
+            stampedRowTemplates: null,
             attached: function () {
                 this.table = this.querySelector("table");
                 this.tbody = this.querySelector("table tbody")
                 this.rowTemplate = this.querySelector("template.row-template");
+                var that = this;
+                // Forward item's notification up to the root
+                this.rowTemplate._forwardInstancePath = function(inst, path, value) {
+                    var index = that.stampedRowTemplates.indexOf(inst);
+                    that.notifyPath('rows.' + index + path.substr(4), value);
+                };
 
                 this.generateRows();
                 this.isAttached = true;
             },
-            observers: ["rowsChanged(rows.*)"],
+            observers: [
+                'rowsChanged(rows.length, rows.splices)',
+                'itemChanged(rows.*)'
+            ],
+            itemChanged: function (change) {
+                // TODO: watchout for keys
+                var path = change.path.match(/rows\.#(\d+)\.(.+)/);
+                if(!path){
+                    return ;
+                }
+                // Make sure that elements were stamped
+                // workaround for Juicy/juicy-table-repeat/issues/4
+                this.stampedRowTemplates[path[1]] &&
+                // notify template
+                  this.stampedRowTemplates[path[1]].notifyPath('item.'+path[2], change.value);
+            },
             generateRows: function () {
                 this.tbody.innerHTML = "";
-
+                this.stampedRowTemplates = [];
                 if (!this.rows || !this.rows.length) {
                     return;
                 }
 
                 for (var i = 0; i < this.rows.length; i++) {
-                    var tr = this._stampTableRow(this.rows[i]);
+                    var row = this.rowTemplate.stamp({item: this.rows[i]});
+                    var tr = row.root.querySelector("tr");
                     this.tbody.appendChild(tr);
+                    this.stampedRowTemplates.push(row);
                 }
             },
             rowsChanged: function (e) {
-                if (!this.isAttached) {
-                    return;
-                }
-
-                var path = e.path.split(/[.#]+/gi);
-                var index = path[1];
-                
-                if (index == "splices" || index == "length") {
-                    this.generateRows();
-                    return;
-                }
-
-                var row = this.get("rows.#" + index);
-                var i = this.rows.indexOf(row);
-                var newTr = this._stampTableRow(this.rows[i]);
-                var oldTr = this.tbody.querySelectorAll("tr")[i];
-
-                this.tbody.insertBefore(newTr, oldTr);
-                this.tbody.removeChild(oldTr);
-            },
-            _stampTableRow: function (data) {
-                this.rowTemplate._parent_item = data;
-
-                var row = this.rowTemplate.stamp();
-                var tr = row.root.querySelector("tr");
-
-                this.rowTemplate._parent_item = undefined;
-
-                return tr;
+                this.generateRows();
             }
         });
     </script>
