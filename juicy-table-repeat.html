@@ -33,8 +33,8 @@
                     that.notifyPath('rows.' + index + path.substr(4), value);
                 };
 
-                this.generateRows();
                 this.isAttached = true;
+                this.generateRows();
             },
             observers: [
                 'rowsChanged(rows.length, rows.splices)',
@@ -42,15 +42,22 @@
             ],
             itemChanged: function (change) {
                 // TODO: watchout for keys
-                var path = change.path.match(/rows\.#(\d+)\.(.+)/);
-                if (!path) {
-                    return;
+                if (this.isAttached && change.path == "rows") {
+                    this.generateRows();
                 }
+                else {
+                    var path = change.path.match(/rows\.#(\d+)\.(.+)/);
+                    if (path) {
+                        this.propagateItemChanges(path, change.value);
+                    }
+                }
+            },
+            propagateItemChanges: function (path, value) {
                 // Make sure that elements were stamped
                 // workaround for Juicy/juicy-table-repeat/issues/4
                 this.stampedRowTemplates[path[1]] &&
                 // notify template
-                  this.stampedRowTemplates[path[1]].notifyPath('item.' + path[2], change.value);
+                  this.stampedRowTemplates[path[1]].notifyPath('item.' + path[2], value);
             },
             generateRows: function () {
                 this.tbody.innerHTML = "";

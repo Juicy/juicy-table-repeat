@@ -20,6 +20,7 @@
             <button type="button" on-click="update" class="btn btn-default">Update first row</button>
             <button type="button" on-click="insert" class="btn btn-default">Insert a row</button>
             <button type="button" on-click="remove" class="btn btn-default">Remove first row</button>
+            <button type="button" on-click="replace" class="btn btn-default">Replace rows</button>
         </p>
         <juicy-table-repeat rows="{{model.products}}">
             <table class="table">
@@ -93,20 +94,37 @@
     <script>
         (function () {
             var template = document.querySelector("#root");
+
+            var products = [{
+                name: "i7-4770k",
+                price: 280
+            }, {
+                name: "i7-4790k",
+                price: 290
+            }, {
+                name: "i7-6700k",
+                price: 330
+            }, {
+                name: "i7-5820k",
+                price: 310
+            }];
+
+            var productsAlternative = [{
+                name: "i5-4870k",
+                price: 315
+            }, {
+                name: "i5-4290k",
+                price: 270
+            }, {
+                name: "i5-4800k",
+                price: 310
+            }, {
+                name: "i5-3220k",
+                price: 420
+            }];
+
             var model = {
-                products: [{
-                    name: "i7-4770k",
-                    price: 280
-                }, {
-                    name: "i7-4790k",
-                    price: 290
-                }, {
-                    name: "i7-6700k",
-                    price: 330
-                }, {
-                    name: "i7-5820k",
-                    price: 310
-                }]
+                products: products
             };
 
             template.update = function () {
@@ -122,6 +140,15 @@
 
             template.remove = function () {
                 template.splice("model.products", 0, 1);
+            };
+
+            template.replace = function () {
+                if (template.model.products === products) {
+                    template.set("model.products", productsAlternative);
+                }
+                else {
+                    template.set("model.products", products);
+                };
             };
 
             template.model = model;

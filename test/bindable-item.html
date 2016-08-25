@@ -95,6 +95,19 @@
                     expect(element.querySelector('table tbody > tr:nth-child(2) > td').innerHTML).to.equal('griptape');
                 });
             });
+            describe('after the whole array is changed from outside (root/parent node)', function () {
+                beforeEach(function (done) {
+                    domBind.set('model.products', [{ name: 'milk', stock: 20 }]);
+                    setTimeout(function () {
+                        element = container.querySelector('juicy-table-repeat');
+                        done();
+                    })
+                });
+                it('should replace all rows', function () {
+                    expect(element.querySelectorAll('table tbody > tr').length).to.equal(1);
+                    expect(element.querySelector('table tbody > tr:nth-child(1) > td').innerHTML).to.equal('milk');
+                });
+            });
             describe('after array element\'s value value is changed from inside (by node stamped from row template)', function () {
                 beforeEach(function (done) {
                     var input = element.querySelector('table tbody > tr:nth-child(2) input');
