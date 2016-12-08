@@ -8,7 +8,7 @@ Will not be required after this Polymer issue is fixed: https://github.com/Polym
 Install the component using [Bower](http://bower.io/):
 
 ```sh
-$ bower install juicy-table-repeat --save
+$ bower install Juicy/juicy-table-repeat --save
 ```
 
 Or [download as ZIP](https://github.com/Juicy/juicy-table-repeat/archive/gh-pages.zip).
