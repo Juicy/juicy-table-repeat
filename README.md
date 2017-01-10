@@ -11,7 +11,7 @@ Install the component using [Bower](http://bower.io/):
 $ bower install Juicy/juicy-table-repeat --save
 ```
 
-Or [download as ZIP](https://github.com/Juicy/juicy-table-repeat/archive/gh-pages.zip).
+Or [download as ZIP](https://github.com/Juicy/juicy-table-repeat/archive/master.zip).
 
 ## Usage
 
